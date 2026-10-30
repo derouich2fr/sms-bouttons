@@ -11,11 +11,15 @@ workflows:
           base64 --decode project.zip.b64 > project.zip
           unzip -o project.zip
           cp -R SMSBoutons/. .
-      - name: Generate Gradle wrapper
+      - name: Set Android SDK location
         script: |
-          gradle wrapper --gradle-version 8.7
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+      - name: Install Gradle 8.7
+        script: |
+          curl -fL https://services.gradle.org/distributions/gradle-8.7-bin.zip -o /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp
       - name: Build debug APK
         script: |
-          ./gradlew assembleDebug
+          /tmp/gradle-8.7/bin/gradle assembleDebug
     artifacts:
       - app/build/outputs/apk/debug/*.apk
